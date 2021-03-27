@@ -1,0 +1,15 @@
+{
+  "name": "MT2",
+  "short_name": "MT2",
+  "description": "The Visualization Multitool for Molecular Epidemiology and Bioinformatics",
+  "theme_color": "#f8f9fa",
+  "background_color": "#f8f9fa",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [],
+  "splash_pages": null,
+  "serviceworker": {
+    "src": "./sw.js"
+  }
+}

@@ -1,0 +1,295 @@
+<link rel="stylesheet" href="css/files.css">
+
+<div id="file-panel" class="container-fluid">
+  <div id="file-table" class="container">
+    <p id="file-prompt" class="text-muted">Drag-and-Drop Files here, or click "Add File(s)" to load data.</p>
+  </div>
+
+  <div id="file-footer" class="d-flex p-2 justify-content-between">
+    <div>
+      <input type="file" id="data-files" class="d-none" multiple="true">
+      <label for="data-files" class="btn btn-primary btn-nr floater mb-0">Add File(s)</label>
+      <button type="button" id="sequenceControlsButton" class="btn btn-default btn-nr floater" data-bs-toggle="modal" data-bs-target="#sequence-controls-modal">Sequence Controls</button>
+    </div>
+    <button id="launch" class="btn btn-success" title="Please select a Network CSV or FASTA File" disabled>Launch</button>
+  </div>  
+</div>
+
+<div class="view-controls">
+  <button type="button" id="file-settings-toggle" class="btn btn-light btn-sm" data-bs-toggle="button" title="Toggle File Settings">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+      <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+    </svg>
+  </button>
+</div>
+
+<div id="file-settings-pane" class="left-pane d-none">
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <a class="nav-link active" id="files-tab" data-bs-toggle="tab" href="#file-settings" role="tab" aria-controls="file-settings" aria-selected="true">Files</a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link" id="experimental-tab" data-bs-toggle="tab" href="#experimental-settings" role="tab" aria-controls="experimental-settings" aria-selected="false">Experimental</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div id="file-settings" class="tab-pane fade active show" role="tabpanel">
+      <div class="form-group row mb-2">
+        <div class="col-5">
+          <label for="default-distance-metric" class="mr-2" title="Which Genetic Distance Metric should Microbe use to first construct the network?">
+            Distance Metric
+          </label>
+        </div>
+        <div class="col-7">
+          <select id="default-distance-metric" class="form-select form-select-sm mr-5">
+            <option value="tn93" selected>TN93</option>
+            <option value="snps">SNPs</option>
+          </select>
+        </div>
+      </div>
+      <div id="ambiguities-row" class="form-group row mb-2">
+        <div class="col-5">
+          <label for="ambiguity-resolution-strategy" class="mr-2" title="What Strategy should MT2 use to handle ambiguities?">
+            Ambiguities
+          </label>
+        </div>
+        <div class="col-7">
+          <select id="ambiguity-resolution-strategy" class="form-select form-select-sm mr-5">
+            <option value="AVERAGE">Average</option>
+            <option value="RESOLVE">Resolve</option>
+            <option value="SKIP">Skip</option>
+            <option value="GAPMM">GapMM</option>
+            <option value="HIVTRACE-G">HIV-TRACE -g</option>
+          </select>
+        </div>
+      </div>
+      <div id="ambiguity-threshold-row" class="form-group row mb-2">
+        <div class="col-5">
+          <label for="ambiguity-threshold" class="mr-2" title="What's the maximum genetic distance you wish to consider linked? Please note that this can be changed later.">
+            Ambiguity Threshold
+          </label>
+        </div>
+        <div class="col-7">
+          <input type="number" id="ambiguity-threshold" class="form-control form-control-sm" min="0" value="0.015" step="0.001">
+        </div>
+      </div>
+      <div class="form-group row mb-2">
+        <div class="col-5">
+          <label for="default-distance-threshold" class="mr-2" title="What's the maximum genetic distance you wish to consider linked? Please note that this can be changed later.">
+            Link Threshold
+          </label>
+        </div>
+        <div class="col-7">
+          <input type="number" id="default-distance-threshold" class="form-control form-control-sm" min="0" value="0.015" step="0.001">
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-5">
+          <label for="default-view">View to Launch</label>
+        </div>
+        <div class="col-7">
+          <select id="default-view" class="form-select form-select-sm" title="Which view should MT2 render first, once it has successfully processed the data?">
+            <option value="2d_network" selected>2D Network</option>
+            <option value="3d_network">3D Network</option>
+            <option value="bubbles">Bubbles</option>
+            <option value="table">Table</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div id="experimental-settings" class="tab-pane fade" role="tabpanel">
+      <div class="form-group row">
+        <div class="col-12">
+          <div class="alert alert-warning alert-dismissible" role="alert">
+            The following settings are experimental! Use at your own risk!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row mb-2" title="Would you like to generate a network based on random data?">
+        <div class="col-6">Generate Sequences</div>
+        <div class="col">
+          <input id="generate-number" type="number" class="form-control form-control-sm" min="1" max="2000" step="1" value="100">
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-primary btn-sm" id="generate-sequences">Generate</button>
+        </div>
+      </div>
+      <div class="form-group row mb-2" title="Would you like to attempt to infer the direction of your links?">
+        <div class="col-6">
+          <label class="form-check-label" for="infer-directionality">Infer Directionality</label>
+        </div>
+        <div class="col">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="infer-directionality">
+          </div>
+        </div>
+      </div>
+      <div class="form-group row mb-2" title="Would you like to attempt to triangulate missing values in your distance matrices?">
+        <div class="col-6">
+          <label class="form-check-label" for="triangulate-distances">Triangulate Distances</label>
+        </div>
+        <div class="col">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="triangulate-distances">
+          </div>
+        </div>
+      </div>
+      <div class="form-group row"
+        title="Should MT2 automatically stash your session so if your computer crashes you can recover your session?
+Please note that this causes MT2 to store data on your computer's hard drive, which may have implications for PII.">
+        <div class="col-6">
+          <label class="form-check-label" for="autostash">
+            Autostash
+          </label>
+        </div>
+        <div class="col">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="autostash">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="sequence-controls-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="#sequence-controls-title" aria-hidden="true" data-bs-backdrop="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="sequence-controls-title" class="modal-title">Sequence Settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs" id="sequence-controls-tab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="sequence-alignment-tab" data-bs-toggle="tab" href="#sequence-alignment" role="tab" aria-controls="sequence-alignment" aria-selected="true">Alignment</a>
+          </li>
+          <!--li class="nav-item">
+            <a class="nav-link" id="sequence-auditor-tab" data-bs-toggle="tab" href="#sequence-auditor" role="tab" aria-controls="sequence-auditor" aria-selected="false">Audit</a>
+          </li-->
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="sequence-alignment" role="tabpanel" aria-labelledby="sequence-alignment-tab">
+            <div class="form-group row">
+              <div class="col-12">
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                  MT2 is not intended to be an alignment program (although it can be used in that way). For best results, please align your sequences using <a href="https://en.wikipedia.org/wiki/List_of_sequence_alignment_software" target="_blank" rel="noreferrer noopener">an external tool</a> before loading them into MT2.
+                  <a href="https://github.com/ephemer-ai/MT2/wiki/Alignment" class="if-online" target="_blank" rel="noreferrer noopener">Click here for additional information.</a>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row" title="Should MT2 align your sequences?">
+              <div class="col-5">
+                <label class="form-check-label" for="align-sw">Align</label>
+              </div>
+              <div class="col-7">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="align-sw">
+                </div>
+              </div>
+            </div>
+            <div class="form-group row alignConfigRow" title="What should MT2 use as a reference to align your sequences?">
+              <div class="col-5">Reference Source</div>
+              <div class="col-7">
+                <select class="form-select form-select-sm" id="reference-source">
+                  <option value="file">Load From FASTA</option>
+                  <option value="first">First Sequence</option>
+                  <option value="consensus">Consensus</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group row" id="reference-file-row">
+              <div class="col-4" title="Against what sequence should MT2 align your sequences?">Reference</div>
+              <div class="col-4">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="refSeqFileLoad">
+                  <label class="custom-file-label" for="refSeqFileLoad" style="overflow:hidden">HXB2</label>
+                </div>
+              </div>
+              <div class="col-4">
+                <select id="refSeqID" class="form-control"></select>
+              </div>
+            </div>
+            <div class="row alignConfigRow">
+              <div class="form-group col offset-2" title="How much should MT2 reward matching bases?">
+                <label for="alignerMatch">Match Reward</label>
+                <input type="number" id="alignerMatch" class="form-control" value="1" min="0">
+              </div>
+              <div class="form-group col" title="How much should MT2 penalize non-matching bases?">
+                <label for="alignerMismatch">Mismatch Cost</label>
+                <input type="number" id="alignerMismatch" class="form-control" value="1" min="0">
+              </div>
+            </div>
+            <div class="row alignConfigRow">
+              <div class="form-group col offset-2" title="How much should MT2 Penalize opening a gap?">
+                <label for="alignerGapO">Gap Opening Cost</label>
+                <input type="number" id="alignerGapO" class="form-control" value="5" min="0">
+              </div>
+              <div class="form-group col" title="How much should MT2 Penalize extending a gap?">
+                <label for="alignerGapE">Gap Extension Cost</label>
+                <input type="number" id="alignerGapE" class="form-control" value="2" min="0">
+              </div>
+            </div>
+            <div class="row alignPreviewRow">
+              <div class="w-100 text-center" id="alignment-preview"></div>
+            </div>
+          </div>
+          <!--div class="tab-pane fade" id="sequence-auditor" role="tabpanel" aria-labelledby="sequence-auditor-tab">
+            <div class="row mb-3">
+              <div class="form-check col" title="Checks to see if a Sequence is empty.">
+                <input class="form-check-input" type="checkbox" id="audit-empty" checked>
+                <label class="form-check-label" for="audit-empty">
+                  Empty
+                </label>
+              </div>
+              <div class="form-check col" title="Checks to see if a Sequence is all gaps.">
+                <input class="form-check-input" type="checkbox" id="audit-gaps" checked>
+                <label class="form-check-label" for="audit-gaps">
+                  Gaps
+                </label>
+              </div>
+              <div class="form-check col" title="Check to see if sequence contains any characters that are RNA instead of DNA.">
+                <input class="form-check-input" type="checkbox" id="audit-RNA" checked>
+                <label class="form-check-label" for="audit-RNA">
+                  RNA
+                </label>
+              </div>
+              <div class="form-check col" title="Check to see if Sequence contains any characters that represent Amino Acids.">
+                <input class="form-check-input" type="checkbox" id="audit-amino-acids" checked>
+                <label class="form-check-label" for="audit-amino-acids">
+                  Amino Acids
+                </label>
+              </div>
+              <div class="form-check col" title="Check to see if Sequence contains any characters describing an alignment.">
+                <input class="form-check-input" type="checkbox" id="audit-CIGAR" checked>
+                <label class="form-check-label" for="audit-CIGAR">
+                  CIGAR
+                </label>
+              </div>
+              <div class="form-check col" title="Check to see if Sequence contains any characters that are illegal in any genomic or proteomic alphabet.">
+                <input class="form-check-input" type="checkbox" id="audit-malformed" checked>
+                <label class="form-check-label" for="audit-malformed">
+                  Malformed
+                </label>
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-primary btn-sm w-100" id="audit-launcher">Run</button>
+              </div>
+            </div>
+            <div class="row" id="audited-sequences"></div>
+            <div class="row flex-row-reverse" style="padding-right: 21px">
+              <button class="btn btn-danger btn-sm" id="audit-toggle-all">Toggle All</button>
+            </div>
+          </div-->
+        </div>
+      </div>
+      <div class="modal-footer clearfix">
+        <button type="submit" class="btn btn-success pull-right" data-bs-dismiss="modal"
+          title="Confirm Load Settings are All Properly Set">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/files.js"></script>
