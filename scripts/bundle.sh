@@ -28,11 +28,13 @@ primaryscripts=(
 # specific view can be rendered. You should probably add your new script to this
 # array.
 secondaryscripts=(
+  "node_modules/force-graph/dist/force-graph.min.js"
+  "node_modules/3d-force-graph/dist/3d-force-graph.min.js"
   "node_modules/d3-force-attract/dist/d3-force-attract.min.js"
   "node_modules/d3-symbol-extra/build/d3-symbol-extra.min.js"
   "node_modules/d3-polygon/dist/d3-polygon.min.js"
+  "node_modules/stats.js/build/stats.min.js"
   "node_modules/plotly.js/dist/plotly-cartesian.min.js"
-  "node_modules/3d-force-graph/dist/3d-force-graph.min.js"
   "node_modules/moment/min/moment-with-locales.min.js"
   "node_modules/tidytree/dist/tidytree.min.js"
   "node_modules/leaflet/dist/leaflet.js"

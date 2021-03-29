@@ -223,7 +223,7 @@ $(function() {
       );
       $("#filtering-epsilon-row").css("display", "flex");
       session.style.widgets["link-show-nn"] = true;
-      MT2.computeMST(session.style.widgets["default-distance-metric"]).then(updateNetwork);
+      //MT2.computeMST(session.style.widgets["default-distance-metric"]).then(updateNetwork);
       //updateNetwork();
     });
 
@@ -239,7 +239,7 @@ $(function() {
         Math.pow(10, parseFloat(this.value)).toLocaleString()
       );
       // MT2.computeNN(session.style.widgets["default-distance-metric"]).then(updateNetwork);
-      MT2.computeMST(session.style.widgets["default-distance-metric"]).then(updateNetwork);
+      // MT2.computeMST(session.style.widgets["default-distance-metric"]).then(updateNetwork);
     });
 
   $("#cluster-minimum-size").on("change", function() {
