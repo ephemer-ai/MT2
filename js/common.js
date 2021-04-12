@@ -277,13 +277,13 @@
     matrix: {},
     messageTimeout: null,
     style: {
-      linkAlphaMap: () => 1 - session.style.widgets["link-opacity"],
-      linkColorMap: () => session.style.widgets["link-color"],
+      linkAlphaMap: () => 1 - session.style.widgets["network-link-opacity"],
+      linkColorMap: () => session.style.widgets["network-link-color"],
       nodeAlphaMap: () => 1,
-      nodeColorMap: () => session.style.widgets["node-color"],
-      nodeSymbolMap: () => session.style.widgets["node-symbol"],
+      nodeColorMap: () => session.style.widgets["network-node-color"],
+      nodeSymbolMap: () => session.style.widgets["network-node-symbol"],
       polygonAlphaMap: () => 0.5,
-      polygonColorMap: () => session.style.widgets["polygon-color"]
+      polygonColorMap: () => session.style.widgets["network-polygon-color"]
     },
     trees: {}
   });
