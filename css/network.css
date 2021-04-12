@@ -1,11 +1,61 @@
-.graph-nav-info {
-    display: none;
+#network {
+  height: 100%;
+  width: 100%;
+}
+#node-symbol-table-wrapper {
+  position: absolute;
+  top: 457px;
+  left: 10px;
+  z-index: 999;
+  max-height: 400px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border-radius: 0.25rem;
+  color: #303030;
+  background-color: #f8f9fa !important;
+}
+#node-symbol-table-draghandle {
+  width: 100%;
+  text-align: center;
+}
+#node-symbol-table th {
+  border: 1px solid lightgray;
+  padding: 4px;
+  text-align: center;
+}
+#node-symbol-table td {
+  border: 1px solid lightgray;
+  padding: 4px;
+}
+#node-symbol-table select {
+  border: none;
+  background: transparent;
+}
+.nodes path {
+  cursor: -webkit-grab;
+}
+.nodes path.selected {
+  stroke: #ff8300;
+  stroke-width: 4px;
 }
 
-.three-dee-node-tooltip {
-    color:#333333;
-    background:#f5f5f5;
-    border:1px solid #cccccc;
-    border-radius:.25rem;
-    padding:.25rem;
+#attributeModal .modal-body {
+  max-height: 600px;
+  padding: 0;
+}
+#attributeModal .table {
+  font-family: monospace;
+  margin: 0;
+}
+#node-label-row {
+  display: none;
+}
+#node-max-radius-row, #node-min-radius-row {
+  display: none;
+}
+#link-reciprocalthickness-row {
+  display: none;
+}
+#link-max-width-row, #link-min-width-row {
+  display: none;
 }
