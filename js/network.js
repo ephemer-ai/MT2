@@ -1,221 +1,186 @@
-(function () {
-    let links = [];
-    let nodes = [];
+(() => {
+  'use strict';
 
-    let graph = ForceGraph()($("#network").get(0));
+  let nsp = document.getElementById("network-settings-pane");
+  document.getElementById("network-settings-toggle").addEventListener("click", function (){
+    if (this.classList.contains("active")) {
+      nsp.classList.remove("d-none");
+      MT2.animate(nsp, "slideInLeft");
+    } else {
+      MT2.animate(nsp, "slideOutLeft").then(e => {
+        nsp.classList.add("d-none");
+      })
+    }
+  });
 
-    function updateNodeTooltip() {
-      let nodeTooltip = session.style.widgets["network-node-tooltip-variable"];
-      if (nodeTooltip == "None" || nodeTooltip == null) {
-        graph.nodeLabel("");
-      } else {
-        graph.nodeLabel(d => `<span class="network-node-tooltip">${d[nodeTooltip]}</span>`);
+  //These get reset almost immediately, they just need to be non-negative numbers
+  let height = 600, width = 800;
+
+  let graphCanvas = d3.select('#network');
+  let graphCanvasNode = graphCanvas.node();
+  
+  let context = graphCanvasNode.getContext('2d');
+
+  let settings = session.style.widgets;
+
+  let nodes, links, simulation;
+
+  simulation = d3.forceSimulation()
+    .force('link', d3.forceLink()
+      .id(d => d._id)
+      .distance(l => settings['link-length'])
+      .strength(settings['network-link-strength'])
+    )
+    .force('charge', d3.forceManyBody()
+      .strength(-settings['network-node-charge'])
+    )
+    .force('gravity', d3.forceAttract()
+      .target([width / 2, height / 2])
+      .strength(settings['network-gravity'])
+    )
+    .force('center', d3.forceCenter(width / 2, height / 2));
+
+  let transform = d3.zoomIdentity;
+
+  function resize(){
+    let wrapper = $('#network').parent();
+    height = wrapper.height();
+    width = wrapper.width();
+    graphCanvasNode.height = height;
+    graphCanvasNode.width = width;
+    graphCanvas
+      .call(
+        d3.drag().subject(dragsubject)
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended))
+      .call(
+        d3.zoom().scaleExtent([1 / 10, 8])
+          .on("zoom", e => {
+            transform = e.transform;
+            render();
+          }));
+    simulation
+      .force('center')
+      .x(width/2)
+      .y(height/2);
+    simulation
+      .force('gravity')
+      .target([width / 2, height / 2]);
+  }
+
+  function updateData(){
+    nodes = MT2.getVisibleNodes();
+
+    links = MT2.getVisibleLinks(true);
+    for (let i = links.length-1; i >= 0; i--) {
+      let link = links[i];
+      link.source = nodes.find(d => d._id == link.source || d.id == link.source);
+      link.target = nodes.find(d => d._id == link.target || d.id == link.target);
+    }
+
+    simulation.nodes(nodes);
+    simulation.force('link').links(links);
+
+    resize();
+  }
+
+  updateData();
+
+  let stats = new Stats();
+  stats.showPanel(0);
+  Object.assign(stats.dom.style, {
+    "position": "absolute",
+    "top": "10px",
+    "left": "auto",
+    "right": "10px",
+    "z-index": "100000000"
+  });
+  nsp.appendChild(stats.dom);
+
+  simulation.on("tick", render);
+
+  const TAO = Math.PI*2;
+
+  function render(){
+    stats.begin();
+
+    let radius = settings['network-node-radius'];
+
+    context.save();
+    context.clearRect( 0, 0, context.canvas.width, context.canvas.height);
+
+    context.translate(transform.x, transform.y);
+    context.scale(transform.k, transform.k);
+
+    context.strokeStyle = "rgba(0, 0, 0, 0.2)";
+    for (let i = links.length-1; i >= 0; i--){
+      let d = links[i];
+      context.beginPath();
+      context.moveTo(d.source.x, d.source.y);
+      context.lineTo(d.target.x, d.target.y);
+      context.stroke();
+    }
+
+    context.fillStyle = "#0000ff";
+    for (let i = nodes.length-1; i >= 0; i--) {
+      let d = nodes[i];
+      context.beginPath();
+      context.arc(d.x, d.y, radius, 0, TAO, true);
+      context.fill();
+    }
+
+    context.restore();
+
+    stats.end();
+  }
+
+  function dragsubject(e) {
+    let x = transform.invertX(e.x),
+        y = transform.invertY(e.y);
+    let r2 = settings['network-node-radius']**2;
+    for (let i = nodes.length-1; i >= 0; i--) {
+      let node = nodes[i];
+      let nx = node.x, ny = node.y;
+      let dx = x - nx;
+      let dy = y - ny;
+      if (dx * dx + dy * dy < r2) {
+        node.x = transform.applyX(nx);
+        node.y = transform.applyY(ny);
+        return node;
       }
     }
+  }
+  
+  function dragstarted(e) {
+    if (!e.active) simulation.alphaTarget(0.3).restart();
+    e.subject.fx = transform.invertX(e.x);
+    e.subject.fy = transform.invertY(e.y);
+  }
+  
+  function dragged(e) {
+    e.subject.fx = transform.invertX(e.x);
+    e.subject.fy = transform.invertY(e.y);
+  }
+  
+  function dragended(e) {
+    if (!e.active) simulation.alphaTarget(0);
+    e.subject.fx = null;
+    e.subject.fy = null;
+  }
 
-    function updateNodeColors() {
-      let nodeColorBy = session.style.widgets["node-color-variable"];
-      if (nodeColorBy == "None") {
-        let nodeColor = session.style.widgets["node-color"];
-        graph.nodeColor(d =>
-          d.selected ? session.style.widgets["selected-color"] : nodeColor
-        );
-      } else {
-        graph.nodeColor(d =>
-          d.selected
-            ? session.style.widgets["selected-color"]
-            : temp.style.nodeColorMap(d[nodeColorBy])
-        );
-      }
-      graph.nodeOpacity(1);
-    }
+  document.getElementById('network-node-radius').addEventListener('input', function(){
+    settings['network-node-radius'] = this.value;
+    render();
+  });
 
-    function updateNodeSizes() {
-      let nodeSizeBy = session.style.widgets["network-node-radius-variable"];
-      if (nodeSizeBy !== "None") graph.nodeVal(nodeSizeBy);
-      graph.nodeRelSize(session.style.widgets["network-node-radius"]);
-    }
+  layout.on('stateChanged', resize);
 
-    function updateLinkTooltip() {
-      let linkTooltip = session.style.widgets["network-link-tooltip-variable"];
-      if (linkTooltip == "None") {
-        graph.linkLabel("");
-      } else {
-        graph.linkLabel(d => `<span style="color:#333333;background:#f5f5f5;border:1px solid #cccccc;border-radius:.25rem;padding:.25rem;">${d[linkTooltip]}</span>`);
-      }
-    }
-
-    function updateLinkColors() {
-      let linkColorBy = session.style.widgets["link-color-variable"];
-      if (linkColorBy == "None") {
-        let linkColor = session.style.widgets["link-color"];
-        graph.linkColor(l => linkColor);
-      } else {
-        graph.linkColor(l => temp.style.linkColorMap(l[linkColorBy]));
-      }
-    }
-
-    function updateLinkOpacity() {
-      graph.linkOpacity(1 - session.style.widgets["network-link-transparency"]);
-    }
-
-    function updateLinkWidth() {
-      graph.linkWidth(session.style.widgets["network-link-width"]);
-    }
-
-    function updateBackground() {
-      graph.backgroundColor(session.style.widgets["background-color"]);
-    }
-
-    function updateData() {
-      if(!$("#network").length) return;
-      let newNodes = MT2.getVisibleNodes(true);
-      newNodes.forEach(d => {
-        let match = nodes.find(d2 => d._id == d2._id || d.id == d2.id);
-        if (match) {
-          d.x = match.x;
-          d.y = match.y;
-          d.z = match.z;
-          d.vx = match.vx;
-          d.vy = match.vy;
-          d.vz = match.vz;
-        }
-        d.id = d._id;
-      });
-      nodes = newNodes;
-      links = MT2.getVisibleLinks(true);
-      graph.graphData({
-        nodes: nodes,
-        links: links
-      });
-    }
-
-    function updateGraph() {
+  $window
+    .on('node-visibility link-visibility cluster-visibility', () => {
       updateData();
-      updateBackground();
-      updateNodeSizes();
-      updateNodeColors();
-      updateNodeTooltip();
-      updateLinkWidth();
-      updateLinkColors();
-      updateLinkOpacity();
-      updateLinkTooltip();
-    }
+      simulation.alpha(0.3).restart();
+    })
+    .on('node-selected', render);
 
-    // graph.onNodeClick(function(node){
-    //   let model = session.data.nodes.find(d => node.id = d.id);
-    //   if(!model) return;
-    //   model.selected = !model.selected;
-    //   $window.trigger("node-selected");
-    // });
-
-    let nsp = document.getElementById("network-settings-pane");
-
-    var stats = new Stats();
-    stats.showPanel(0);
-    Object.assign(stats.dom.style, {
-      "position": "absolute",
-      "top": "10px",
-      "left": "auto",
-      "right": "10px",
-      "z-index": "100000000"
-    });
-    nsp.appendChild( stats.dom );
-    graph.onEngineTick(() => {
-      stats.end();
-      stats.begin();
-    });
-
-    $("#toggle-network-settings").on("click", function () {
-      if ($(this).hasClass("active")) {
-        nsp.classList.remove("d-none");
-        MT2.animate(nsp, "slideInLeft");
-      } else {
-        MT2.animate(nsp, "slideOutLeft").then(e => {
-          nsp.classList.add("d-none");
-        })
-      }
-    });
-
-    let a, downloads = 0;
-    function download() {
-      if (downloads) {
-        cancelAnimationFrame(a);
-      } else {
-        $("#network canvas")[0].toBlob(blob => {
-          saveAs(blob, $("#export-network-file-name").val() + "." + $("#export-network-file-format").val());
-        });
-      }
-    }
-    $("#network-export").on("click", function () {
-      downloads = 0;
-      a = requestAnimationFrame(download);
-    });
-
-    function clearCoords() {
-      nodes.forEach(d => {
-        delete d.x;
-        delete d.y;
-        delete d.z;
-      });
-      updateGraph();
-    }
-
-    function fit(thing, bounds) {
-      graph.cameraPosition({ z: 1000 });
-    }
-
-    $("#network-fitbutton").on("click", fit);
-
-    $("#reload-network").on("click", clearCoords);
-
-    $("#network-node-tooltip-variable").on("change", function (e) {
-      session.style.widgets["network-node-tooltip-variable"] = e.target.value;
-      updateNodeTooltip();
-    });
-
-    $("#network-node-radius-variable").on("change", function (e) {
-      session.style.widgets["network-node-radius-variable"] = e.target.value;
-      updateNodeSizes();
-    });
-
-    $("#network-node-radius").on("input", function (e) {
-      session.style.widgets["network-node-radius"] = parseFloat(e.target.value);
-      updateNodeSizes();
-    });
-
-    $("#network-link-tooltip-variable").on("change", function (e) {
-      session.style.widgets["network-link-tooltip-variable"] = e.target.value;
-      updateLinkTooltip();
-    });
-
-    $("#network-link-transparency").on("change", function (e) {
-      session.style.widgets["network-link-transparency"] = parseFloat(
-        e.target.value
-      );
-      updateLinkOpacity();
-    });
-
-    $("#network-link-width").on("change", function (e) {
-      session.style.widgets["network-link-width"] = parseFloat(e.target.value);
-      updateLinkWidth();
-    });
-
-    $window
-      .on("link-visibility node-visibility", updateData)
-      .on("node-color-change selected-color-change", updateNodeColors)
-      .on("link-color-change", updateLinkColors)
-      .on("background-color-change", updateBackground)
-      .on("node-selected", function () {
-        updateData();
-        updateNodeColors();
-      });
-
-    // layout.on("stateChanged", function(){
-    //   graph.d3Force("center", [0,0,0]);
-    //   setTimeout(clearCoords, 200);
-    // });
-
-    setTimeout(updateGraph, 100);
-
-  })();
+})();

@@ -49,9 +49,6 @@
         <a class="nav-link dropdown-toggle" href="#" id="viewDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">View</a>
         <ul class="dropdown-menu" aria-labelledby="viewDropdown">
           <li><a href="#" class="dropdown-item viewbutton" data-href="network">Network</a></li>
-          <li><a href="#" class="dropdown-item viewbutton" data-href="canvas_network">Canvas Network</a></li>
-          <li><a href="#" class="dropdown-item viewbutton" data-href="2d_network">2D Network</a></li>
-          <li><a href="#" class="dropdown-item viewbutton" data-href="3d_network">3D Network</a></li>
           <li><a href="#" class="dropdown-item viewbutton" data-href="histogram">Histogram</a></li>
           <li><a href="#" class="dropdown-item viewbutton" data-href="table">Table</a></li>
           <li><a href="#" class="dropdown-item viewbutton" data-href="aggregation">Aggregation</a></li>
@@ -62,7 +59,6 @@
           <li><a href="#" class="dropdown-item viewbutton" data-href="waterfall">Waterfall</a></li>
           <li><a href="#" class="dropdown-item viewbutton" data-href="geo_map">Map</a></li>
           <li><a href="#" class="dropdown-item viewbutton" data-href="choropleth">Choropleth</a></li>
-          <li><a href="#" class="dropdown-item viewbutton" data-href="globe">Globe</a></li>
           <li><a href="#" class="dropdown-item viewbutton" data-href="gantt">Gantt</a></li>
           <li><a href="#" class="dropdown-item viewbutton" data-href="timeline">Epi Curve</a></li>
           <li><a href="#" class="dropdown-item viewbutton" data-href="heatmap">Heatmap</a></li>
@@ -226,33 +222,12 @@ performance of this software.</pre>
     <input type="range" class="form-range" id="color-transparency" min="0" max="1" step="0.05" value="1">
   </div>
 
-  <div id="network-statistics-wrapper" class="floater">
-    <div id="network-statistics-draghandle">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-move" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10zM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8z"/>
-      </svg>
-    </div>
-    <table id="network-statistics-table">
-      <tr>
-        <td class="text-right">
-          <span id="numberOfNodes"></span>
-          (<span id="numberOfSelectedNodes"></span>)
-        </td>
-        <td>Nodes (Selected)</td>
-      </tr>
-      <tr>
-        <td id="numberOfVisibleLinks" class="text-right"></td>
-        <td>Links</td>
-      </tr>
-      <tr>
-        <td id="numberOfDisjointComponents" class="text-right"></td>
-        <td>Clusters</td>
-      </tr>
-      <tr>
-        <td id="numberOfSingletonNodes" class="text-right"></td>
-        <td>Singletons</td>
-      </tr>
-    </table>
+  <div id="network-statistics-wrapper" class="footer">
+    <span id="numberOfNodes"></span> Nodes
+    <span class="pl-2" id="numberOfSelectedNodes"></span> Selected
+    <span class="pl-2" id="numberOfVisibleLinks"></span> Links
+    <span class="pl-2" id="numberOfDisjointComponents"></span> Clusters
+    <span class="pl-2" id="numberOfSingletonNodes"></span> Singletons
   </div>
 
   <div id="network-statistics-context" class="dropdown-menu">

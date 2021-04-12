@@ -42,12 +42,6 @@
   });
   
   MT2.defaultWidgets = {
-    "3DNet-link-tooltip-variable": "None",
-    "3DNet-link-transparency": 0,
-    "3DNet-link-width": 1.6,
-    "3DNet-node-tooltip-variable": "_id",
-    "3DNet-node-radius": 4,
-    "3DNet-node-radius-variable": "None",
     "align-sw": false,
     "ambiguity-resolution-strategy": "AVERAGE",
     "ambiguity-threshold": 0.015,
@@ -92,25 +86,7 @@
     "histogram-axis-x": true,
     "histogram-scale-log": false,
     "histogram-variable": "links-distance",
-    "infer-directionality-false": true,
-    "link-color": "#a6cee3",
-    "link-color-table-name-sort": "DESC",
-    "link-color-table-counts-sort": "DESC",
-    "link-color-table-counts": true,
-    "link-color-table-frequencies": false,
-    "link-color-variable": "None",
-    "link-directed": false,
-    "link-label-variable": "None",
-    "link-length": 0.125,
-    "link-opacity": 0,
-    "link-show-nn": false,
-    "link-sort-variable": "distance",
-    "link-threshold": 0.015,
-    "link-tooltip-variable": "None",
-    "link-width": 3,
-    "link-width-variable": "None",
-    "link-width-max": 27,
-    "link-width-min": 3,
+    "infer-directionality": true,
     "map-basemap-show": false,
     "map-collapsing-on": true,
     "map-counties-show": false,
@@ -133,39 +109,57 @@
     "map-states-show": true,
     "network-friction": 0.4,
     "network-gravity": 0.05,
+    "network-link-color": "#a6cee3",
+    "network-link-color-table-name-sort": "DESC",
+    "network-link-color-table-counts-sort": "DESC",
+    "network-link-color-table-counts": true,
+    "network-link-color-table-frequencies": false,
+    "network-link-color-variable": "None",
+    "network-link-directed": false,
+    "network-link-label-variable": "None",
+    "network-link-length": 0.125,
+    "network-link-opacity": 0,
+    "network-link-show-nn": false,
+    "network-link-sort-variable": "distance",
     "network-link-strength": 0.125,
+    "network-link-threshold": 0.015,
+    "network-link-tooltip-variable": "None",
+    "network-link-width": 3,
+    "network-link-width-variable": "None",
+    "network-link-width-max": 27,
+    "network-link-width-min": 3,
+    "network-node-border-width": 2,
+    "network-node-charge": 200,
+    "network-node-color": "#1f77b4",
+    "network-node-color-border": "#000000",
+    "network-node-color-table-name-sort": "DESC",
+    "network-node-color-table-counts-sort": "DESC",
+    "network-node-color-table-counts": true,
+    "network-node-color-table-frequencies": false,
+    "network-node-color-variable": "None",
+    "network-node-highlight": false,
+    "network-node-label-size": 16,
+    "network-node-label-variable": "None",
+    "network-node-radius": 250,
+    "network-node-radius-variable": "None",
+    "network-node-radius-min": 250,
+    "network-node-radius-max": 4500,
+    "network-node-symbol": "symbolCircle",
+    "network-node-symbol-table-counts": true,
+    "network-node-symbol-table-frequencies": false,
+    "network-node-symbol-variable": "None",
+    "network-node-timeline-variable": "None",
+    "network-node-tooltip-variable": "_id",
     "network-pinned": false,
-    "node-border-width": 2,
-    "node-charge": 200,
-    "node-color": "#1f77b4",
-    "node-color-border": "#000000",
-    "node-color-table-name-sort": "DESC",
-    "node-color-table-counts-sort": "DESC",
-    "node-color-table-counts": true,
-    "node-color-table-frequencies": false,
-    "node-color-variable": "None",
-    "node-highlight": false,
-    "node-label-size": 16,
-    "node-label-variable": "None",
-    "node-radius": 250,
-    "node-radius-variable": "None",
-    "node-radius-min": 250,
-    "node-radius-max": 4500,
-    "node-symbol": "symbolCircle",
-    "node-symbol-table-counts": true,
-    "node-symbol-table-frequencies": false,
-    "node-symbol-variable": "None",
-    "node-timeline-variable": "None",
-    "node-tooltip-variable": "_id",
-    "polygon-color": "#bbccee",
-    "polygon-color-table-name-sort": "DESC",
-    "polygon-color-table-counts-sort": "DESC",
-    "polygon-color-table-counts": true,
-    "polygon-color-table-frequencies": false,
-    "polygon-color-show": false,
-    "polygon-foci": "cluster",
-    "polygon-gather-force": 0,
-    "polygon-show" : false,
+    "network-polygon-color": "#bbccee",
+    "network-polygon-color-table-name-sort": "DESC",
+    "network-polygon-color-table-counts-sort": "DESC",
+    "network-polygon-color-table-counts": true,
+    "network-polygon-color-table-frequencies": false,
+    "network-polygon-color-show": false,
+    "network-polygon-foci": "cluster",
+    "network-polygon-gather-force": 0,
+    "network-polygon-show" : false,
     "reference-source-file": true,
     "reference-source-first": false,
     "reference-source-consensus": false,
@@ -1125,11 +1119,11 @@
   };
   
   MT2.runHamsters = async () => {
-    // if (!session.style.widgets['triangulate-false']) await MT2.computeTriangulation(); #236
+    // if (!session.style.widgets['triangulate']) await MT2.computeTriangulation(); #236
     // MT2.computeNN();
     // MT2.computeMST();
     // await MT2.computeTree();
-    if(!session.style.widgets['infer-directionality-false']) MT2.computeDirectionality();
+    if(!session.style.widgets['infer-directionality']) MT2.computeDirectionality();
     MT2.finishUp();
   };
   
@@ -1793,8 +1787,8 @@
   };
 
   MT2.createPolygonColorMap = () => {
-    if (!temp.polygonGroups || !session.style.widgets["polygon-color-show"]) {
-      temp.style.polygonColorMap = () => session.style.widgets["polygon-color"];
+    if (!temp.polygonGroups || !session.style.widgets["network-polygon-color-show"]) {
+      temp.style.polygonColorMap = () => session.style.widgets["network-polygon-color"];
       return [];
     }
 
@@ -1803,13 +1797,13 @@
     groups.forEach(d => aggregates[d.key] = d.values.length);
     let values = Object.keys(aggregates);
 
-    if (session.style.widgets["polygon-color-table-counts-sort"] == "ASC")
+    if (session.style.widgets["network-polygon-color-table-counts-sort"] == "ASC")
       values.sort(function(a, b) { return aggregates[a] - aggregates[b] });
-    else if (session.style.widgets["polygon-color-table-counts-sort"] == "DESC")
+    else if (session.style.widgets["network-polygon-color-table-counts-sort"] == "DESC")
       values.sort(function(a, b) { return aggregates[b] - aggregates[a] });
-    if (session.style.widgets["polygon-color-table-name-sort"] == "ASC")
+    if (session.style.widgets["network-polygon-color-table-name-sort"] == "ASC")
       values.sort(function(a, b) { return a - b });
-    else if (session.style.widgets["polygon-color-table-name-sort"] == "DESC")
+    else if (session.style.widgets["network-polygon-color-table-name-sort"] == "DESC")
       values.sort(function(a, b) { return b - a });
 
     if (values.length > session.style.polygonColors.length) {
